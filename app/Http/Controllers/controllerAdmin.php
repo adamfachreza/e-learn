@@ -138,22 +138,6 @@ class controllerAdmin extends Controller
             ]);
         }
 
-        if(modelAdmin::create([
-            'name' => $request -> name,
-            'email' => $request -> email,
-            'password' => encrypt($request -> password)
-        ])){
-            return response()->json([
-            'status' => 'berhasil',
-            'message' => 'Data Berhasil Disimpan'
-        ]);
-        }else{
-            return response()->json([
-                'status' => 'gagal',
-                'message' => 'Data Gagal Disimpan'
-            ]);
-        }
-
         $token = $request->token;
         $tokenDb = modelAdmin::where('token',$token)->count();
         if($tokenDb > 0){
@@ -162,19 +146,15 @@ class controllerAdmin extends Controller
             $decoded_array = (array) $decoded;
 
             if($decoded_array['extime'] > time()){
-                if(modelAdmin::create([
-                    'name' => $request -> name,
-                    'email' => $request -> email,
-                    'password' => encrypt($request -> password)
-                ])){
+                if(modelAdmin::where('id', $request->id)->delete()){
                     return response()->json([
                     'status' => 'berhasil',
-                    'message' => 'Data Berhasil Disimpan'
+                    'message' => 'Data Berhasil Dihapus'
                 ]);
                 }else{
                     return response()->json([
                         'status' => 'gagal',
-                        'message' => 'Data Gagal Disimpan'
+                        'message' => 'Data Gagal Dihapus'
                     ]);
                 }
             }else{
