@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facaces\Session;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use illuminate\Http\Response; // buat nerima respond dari inputan
 use Illuminate\Support\Facades\Validator;// librari untuk validasi inputan
 use Illuminate\Contracts\Encryption\DecryptException; // buat encryp decrypt
@@ -104,7 +105,11 @@ class controllerAdmin extends Controller
                         "extime" => time()+(60*120),
                         "id" => $adm->id,
                     );
-                    $jwt = JWT::encode($data,$key ,'HS256');
+                    $jwt = JWT::encode($data,$key,'HS256');
+
+                    modelAdmin::where('id',$adm->id)->update([
+                        'token' => $jwt
+                    ]);
                     return response()->json([
                         'status' => 'berhasil',
                         'message' => 'Berhasil Login',
@@ -142,7 +147,7 @@ class controllerAdmin extends Controller
         $tokenDb = modelAdmin::where('token',$token)->count();
         if($tokenDb > 0){
             $key = env('APP_KEY');
-            $decoded = JWT::decode($token, $key, array('HS256'));
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
             $decoded_array = (array) $decoded;
 
             if($decoded_array['extime'] > time()){
