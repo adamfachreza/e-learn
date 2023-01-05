@@ -19,8 +19,8 @@ class CreateContentsTable extends Migration
             $table->text('keterangan')->nullable();
             $table->text('link_thumbnail')->nullable();
             $table->text('link_video')->nullable();
-            $table->boolean('status')->nullable();
-            $table->integer('view')->nullable();
+            $table->boolean('status')->default(0);
+            $table->integer('view')->default(0);
             $table->timestamps();
             $table->softDeletes();
         });

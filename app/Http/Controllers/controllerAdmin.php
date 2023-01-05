@@ -28,27 +28,11 @@ class controllerAdmin extends Controller
             ]);
         }
 
-        if(modelAdmin::create([
-            'name' => $request -> name,
-            'email' => $request -> email,
-            'password' => encrypt($request -> password)
-        ])){
-            return response()->json([
-            'status' => 'berhasil',
-            'message' => 'Data Berhasil Disimpan'
-        ]);
-        }else{
-            return response()->json([
-                'status' => 'gagal',
-                'message' => 'Data Gagal Disimpan'
-            ]);
-        }
-
         $token = $request->token;
         $tokenDb = modelAdmin::where('token',$token)->count();
         if($tokenDb > 0){
             $key = env('APP_KEY');
-            $decoded = JWT::decode($token, $key, array('HS256'));
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
             $decoded_array = (array) $decoded;
 
             if($decoded_array['extime'] > time()){
@@ -204,12 +188,12 @@ class controllerAdmin extends Controller
                         'email' => $adm->email,
                         'id' => $adm->id
                     );
-                    return response()->json([
-                        'status' => 'berhasil',
-                        'message' => 'Data Berhasil Diambil',
-                        'data' => $data
-                    ]);
                 }
+                return response()->json([
+                    'status' => 'berhasil',
+                    'message' => 'Data Berhasil Diambil',
+                    'data' => $data
+                ]);
                 }
             }else{
                 return response()->json([
