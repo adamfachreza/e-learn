@@ -176,5 +176,49 @@ class controllerAdmin extends Controller
         }
     }
 
+    public function listAdmin(Request $request){
+        $validator = Validator::make($request-> all(),[
+            'token' => 'required'
+        ]);
 
-}
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $validator->messages()
+            ]);
+        }
+
+        $token = $request->token;
+        $tokenDb = modelAdmin::where('token',$token)->count();
+        if($tokenDb > 0){
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+
+            if($decoded_array['extime'] > time()){
+                $admin = modelAdmin::get();
+                $data = array();
+                foreach($admin as $adm){
+                    $data[] = array(
+                        'name' => $adm->name,
+                        'email' => $adm->email,
+                        'id' => $adm->id
+                    );
+                    return response()->json([
+                        'status' => 'berhasil',
+                        'message' => 'Data Berhasil Diambil',
+                        'data' => $data
+                    ]);
+                }
+                }
+            }else{
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Kadaluarsa'
+                ]);
+            }
+        }
+    }
+
+
+
