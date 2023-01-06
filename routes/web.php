@@ -13,3 +13,4 @@ Route::post('/listAdmin','controllerAdmin@listAdmin');
 Route::post('/tambahContent','controllerContent@tambahContent');
 Route::post('/ubahContent','controllerContent@ubahContent');
 Route::post('/hapusContent','controllerContent@hapusContent');
+Route::post('/listContent','controllerContent@listContent');
