@@ -69,4 +69,107 @@ class controllerContent extends Controller
         }
     }
 
+    public function ubahContent(Request $request){
+        $validator = Validator::make($request-> all(),[
+            'judul' => 'required | unique:contents,judul,'.$request->id.',id',
+            'keterangan' => 'required',
+            'link_thumbnail' => 'required',
+            'link_video' => 'required',
+            'id' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $validator->messages()
+            ]);
+        }
+
+        //admin login dulu baru bisa tambah content
+        $token = $request->token;
+        $tokenDb = modelAdmin::where('token',$token)->count();
+        if($tokenDb > 0){
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+
+            if($decoded_array['extime'] > time()){
+                if(modelContent::where('id',$request->id)->update([
+                    'judul' => $request -> judul,
+                    'keterangan' => $request -> keterangan,
+                    'link_thumbnail' => $request -> link_thumbnail,
+                    'link_video' => $request -> link_video,
+
+                ])){
+                    return response()->json([
+                    'status' => 'berhasil',
+                    'message' => 'Data Berhasil Diubah'
+                ]);
+                }else{
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Data Gagal Diubah'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Kadaluarsa'
+                ]);
+            }
+        }else{
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'Token Tidak Valid'
+            ]);
+        }
+    }
+
+    public function hapusContent(Request $request){
+        $validator = Validator::make($request-> all(),[
+            'id' => 'required',
+            'token' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $validator->messages()
+            ]);
+        }
+
+        //admin login dulu baru bisa tambah content
+        $token = $request->token;
+        $tokenDb = modelAdmin::where('token',$token)->count();
+        if($tokenDb > 0){
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+
+            if($decoded_array['extime'] > time()){
+                if(modelContent::where('id',$request->id)->delete()){
+                    return response()->json([
+                    'status' => 'berhasil',
+                    'message' => 'Data Berhasil Dihapus'
+                ]);
+                }else{
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Data Gagal Dihapus'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Kadaluarsa'
+                ]);
+            }
+        }else{
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'Token Tidak Valid'
+            ]);
+        }
+    }
+
 }

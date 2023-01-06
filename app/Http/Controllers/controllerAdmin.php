@@ -18,7 +18,7 @@ class controllerAdmin extends Controller
             'name' => 'required',
             'email' => 'required|unique:users,email',
             'password' => 'required',
-            'token' => 'required'
+            // 'token' => 'required'
         ]);
 
         if($validator->fails()){
@@ -28,22 +28,30 @@ class controllerAdmin extends Controller
             ]);
         }
 
-        $token = $request->token;
-        $tokenDb = modelAdmin::where('token',$token)->count();
-        if($tokenDb > 0){
-            $key = env('APP_KEY');
-            $decoded = JWT::decode($token, new Key($key, 'HS256'));
-            $decoded_array = (array) $decoded;
+        // $token = $request->token;
+        // $tokenDb = modelAdmin::where('token',$token)->count();
+        // if($tokenDb > 0){
+        //     $key = env('APP_KEY');
+        //     $decoded = JWT::decode($token, new Key($key, 'HS256'));
+        //     $decoded_array = (array) $decoded;
 
-            if($decoded_array['extime'] > time()){
+            // if($decoded_array['extime'] > time()){
+                $key = env('APP_KEY');
+                $data = array(
+                    "extime" => time()+(60*120),
+                    "id" => $request->id,
+                );
+                $jwt = JWT::encode($data,$key,'HS256');
                 if(modelAdmin::create([
                     'name' => $request -> name,
                     'email' => $request -> email,
-                    'password' => encrypt($request -> password)
+                    'password' => encrypt($request -> password),
+                    'token' => $jwt
                 ])){
                     return response()->json([
                     'status' => 'berhasil',
                     'message' => 'Data Berhasil Disimpan'
+
                 ]);
                 }else{
                     return response()->json([
@@ -51,18 +59,18 @@ class controllerAdmin extends Controller
                         'message' => 'Data Gagal Disimpan'
                     ]);
                 }
-            }else{
-                return response()->json([
-                    'status' => 'gagal',
-                    'message' => 'Token Kadaluarsa'
-                ]);
-            }
-        }else{
-            return response()->json([
-                'status' => 'gagal',
-                'message' => 'Token Tidak Valid'
-            ]);
-        }
+            // }else{
+            //     return response()->json([
+            //         'status' => 'gagal',
+            //         'message' => 'Token Kadaluarsa'
+            //     ]);
+            // }
+        // }else{
+        //     return response()->json([
+        //         'status' => 'gagal',
+        //         'message' => 'Token Tidak Valid'
+        //     ]);
+        // }
     }
 
     public function loginAdmin(Request $request){
