@@ -168,6 +168,55 @@ class controllerAdmin extends Controller
         }
     }
 
+    public function ubahAdmin(Request $request){
+        $validator = Validator::make($request->all(),[
+            'name' => 'required',
+            'email' => 'required',
+            'id' => 'required',
+            'password' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $validator->messages()
+            ]);
+        }
+
+        $token = $request->token;
+        $tokenDb = modelAdmin::where('token',$token)->count();
+        if($tokenDb>0){
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+
+            if ($decoded_array['extime'] > time()){
+                if(modelAdmin::where('id',$request->id)->update([
+                    'name'=> $request->name,
+                    'email' => $request->email,
+                    'password' => encrypt($request -> password),
+                ])){
+                    return response()->json([
+                        'status' => 'berhasil',
+                        'message' => 'Data Berhasil Diubah'
+                    ]);
+                }else{
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Token Kadaluarsa'
+                    ]);
+                }
+            }else{
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Tidak valid'
+                ]);
+            }
+        }
+    }
+
+
+
     public function listAdmin(Request $request){
         $validator = Validator::make($request-> all(),[
             'token' => 'required'
@@ -211,6 +260,9 @@ class controllerAdmin extends Controller
             }
         }
     }
+
+
+
 
 
 

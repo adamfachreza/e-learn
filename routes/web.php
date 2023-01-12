@@ -8,6 +8,7 @@ Route::post('/loginAdmin','controllerAdmin@loginAdmin');
 Route::post('/hapusAdmin','controllerAdmin@hapusAdmin');
 
 Route::post('/listAdmin','controllerAdmin@listAdmin');
+Route::post('/ubahAdmin','controllerAdmin@ubahAdmin');
 
 // Routing Content
 Route::post('/tambahContent','controllerContent@tambahContent');

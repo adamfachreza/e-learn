@@ -196,7 +196,7 @@ class controllerContent extends Controller
                 $content = modelContent::get();
 
                 return response()->json([
-                    'status' => 'Berhasil',
+                    'status' => 'berhasil',
                     'message' => 'Data Berhasil Diambil',
                     'data' => $content
                 ]);
