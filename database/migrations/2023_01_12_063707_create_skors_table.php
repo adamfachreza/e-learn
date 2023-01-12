@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSoalsTable extends Migration
+class CreateSkorsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,11 @@ class CreateSoalsTable extends Migration
      */
     public function up()
     {
-        Schema::create('soals', function (Blueprint $table) {
+        Schema::create('skors', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->text('pertanyaan');
-            $table->text('opsi1');
-            $table->text('opsi2');
-            $table->text('opsi3');
-            $table->text('opsi4');
-            $table->text('jawaban');
-            $table->int('status');
+            $table->bigIncrements('id_peserta');
+            $table->integer('skor');
+            $table->integer('status');
             $table->softDeletes();
             $table->timestamps();
         });
@@ -34,6 +30,6 @@ class CreateSoalsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('soals');
+        Schema::dropIfExists('skors');
     }
 }
