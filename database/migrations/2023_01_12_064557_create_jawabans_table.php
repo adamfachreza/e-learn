@@ -15,8 +15,9 @@ class CreateJawabansTable extends Migration
     {
         Schema::create('jawabans', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigIncrements('id_peserta');
-            $table->bigIncrements('id_soal');
+            $table->integer('id_peserta');
+            $table->integer('id_soal');
+            $table->integer('id_skor');
             $table->text('jawaban');
             $table->integer('status_jawaban');
             $table->softDeletes();

@@ -19,7 +19,7 @@ class CreatePesertasTable extends Migration
             $table->string('email');
             $table->string('password');
             $table->text('token')->nullable();
-            $table->integer('status');
+            $table->integer('status')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

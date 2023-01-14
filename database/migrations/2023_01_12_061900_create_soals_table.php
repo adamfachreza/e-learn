@@ -21,7 +21,7 @@ class CreateSoalsTable extends Migration
             $table->text('opsi3');
             $table->text('opsi4');
             $table->text('jawaban');
-            $table->int('status');
+            $table->integer('status')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

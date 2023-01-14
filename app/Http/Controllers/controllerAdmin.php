@@ -215,8 +215,6 @@ class controllerAdmin extends Controller
         }
     }
 
-
-
     public function listAdmin(Request $request){
         $validator = Validator::make($request-> all(),[
             'token' => 'required'
@@ -258,8 +256,8 @@ class controllerAdmin extends Controller
                     'message' => 'Token Kadaluarsa'
                 ]);
             }
-        }
     }
+}
 
 
 

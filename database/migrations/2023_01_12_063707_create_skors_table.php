@@ -15,7 +15,7 @@ class CreateSkorsTable extends Migration
     {
         Schema::create('skors', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigIncrements('id_peserta');
+            $table->integer('id_peserta');
             $table->integer('skor');
             $table->integer('status');
             $table->softDeletes();
