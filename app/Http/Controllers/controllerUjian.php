@@ -144,31 +144,64 @@ class controllerUjian extends Controller
         }
     }
 
-    public function hitungSkor(Request $request){
+    public function hitungSkor(Request $request)
+    {
         $token = $request->token;
-        $tokenDb = Peserta::where('token',$token)->count();
-        if($tokenDb>0){
-            $key=env('APP_KEY');
+        $tokenDb = Peserta::where('token', $token)->count();
+        if ($tokenDb > 0) {
+            $key = env('APP_KEY');
             $decoded = JWT::decode($token, new Key($key, 'HS256'));
             $decoded_array = (array) $decoded;
-            if($decoded_array['extime']> time()){
-                $id_s = Skor::where('id_peserta', $decoded_array['id_peserta'])->where('status',1)->first();
-                $jawaban = Jawaban::where('status', 1)->where('id_skor', $id_s->id)->count();
+            if ($decoded_array['extime'] > time()) {
+                $id_s = Skor::where('id_peserta', $decoded_array['id'])->where('status', 1)->first();
+                $jawaban = Jawaban::where('status_jawaban', 1)->where('id_skor', $id_s->id)->count();
                 return  response()->json([
                     'status' => 'berhasil',
                     'skor' => $jawaban,
                 ]);
-            }else{
+            } else {
                 return response()->json([
                     'status' => 'gagal',
                     'message' => 'Token Kadaluarsa',
                 ]);
             }
-        }else{
+        } else {
             return response()->json([
                 'status' => 'gagal',
                 'message' => 'Token Tidak Valid',
             ]);
+        }
+    }
+
+    public function selesaiUjian(Request $request)
+    {
+        $token = $request->token;
+        $tokenDb = Peserta::where('token', $token)->count();
+        if ($tokenDb > 0) {
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+            if ($decoded_array['extime'] > time()) {
+                $id_s = Skor::where('id_peserta', $decoded_array['id'])->where('status', 1)->first();
+                if (Skor::where('id', $id_s->id)->update([
+                    'status' => 0,
+                ])) {
+                    return response()->json([
+                        'status' => 'berhasil',
+                        'message' => 'Data Berhasil Diubah',
+                    ]);
+                } else {
+                    return response()->json([
+                        'status' => 'gagal',
+                        'message' => 'Data Gagal Diubah'
+                    ]);
+                }
+            } else {
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Kadaluarsa',
+                ]);
+            }
         }
     }
 }
