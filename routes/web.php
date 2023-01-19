@@ -25,3 +25,4 @@ Route::post('/listSoal','controllerUjian@listSoal');
 Route::post('/jawab','controllerUjian@jawab');
 Route::post('/hitungSkor','controllerUjian@hitungSkor');
 Route::post('/selesaiUjian','controllerUjian@selesaiUjian');
+Route::post('/cariContent', 'controllerContent@cariContent');

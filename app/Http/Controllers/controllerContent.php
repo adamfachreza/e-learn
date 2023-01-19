@@ -12,6 +12,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use App\modelAdmin;
 use App\modelContent;
 use App\Peserta;
+use Symfony\Component\Console\Input\Input;
 
 class controllerContent extends Controller
 {
@@ -253,6 +254,45 @@ class controllerContent extends Controller
             return response()->json([
                 'status' => 'gagal',
                 'message' => 'Token Tidak Valid'
+            ]);
+        }
+    }
+
+    public function cariContent(Request $request){
+        $validator = Validator::make($request-> all(),[
+            'token' => 'required'
+        ]);
+
+        if($validator->fails()){
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $validator->messages()
+            ]);
+        }
+        $token = $request->token;
+        $tokenDb = Peserta::where('token', $token)->count();
+        if($tokenDb>0){
+            $key = env('APP_KEY');
+            $decoded = JWT::decode($token, new Key($key, 'HS256'));
+            $decoded_array = (array) $decoded;
+            if ($decoded_array['extime'] > time()) {
+                $cari = $request->cari;
+                $content = modelContent::where('judul','like',"%$cari%")->get();
+                return response()->json([
+                    'status' => 'berhasil',
+                    'message' => 'data berhasil diambil',
+                    'content' => $content,
+                ]);
+            }else{
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Token Kadaluarsa',
+                ]);
+            }
+        }else{
+            return response()->json([
+                'status' => 'gagal',
+                'message' => 'Token Tidak Valid',
             ]);
         }
     }

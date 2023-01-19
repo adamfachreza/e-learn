@@ -59,6 +59,7 @@ class controllerUjian extends Controller
                         'opsi3' => $p->opsi3,
                         'opsi4' => $p->opsi4,
                         'jumlah_jawaban' => $jum_jawaban,
+                        'id_skor' => $id_s->id,
                     );
                 }
                 return response()->json([
